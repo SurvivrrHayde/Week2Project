@@ -1,8 +1,6 @@
 import Message from "./Message";
 import EmptyMessage from "./EmptyMessage";
-import { collection, getDocs, } from "firebase/firestore";
 import {useState, useEffect} from "react"
-import db from "../firebase";
 
 function Messaging() {
 
@@ -11,29 +9,27 @@ function Messaging() {
     const [nothing, setNothing] = useState(false);
 
     useEffect(() => {
-        const messages = [];
-        getDocs(collection(db, "messages")).then((allMessages) => {
-          allMessages.forEach((message) =>
-            messages.push({ id: message.id, ...message.data() })
-          );
-          if (messages.length === 0) {
-            setNothing(true);
-          }
-          setMessages(messages);
-        });
+        fetch("http://localhost:9000/demo/messages")
+        .then((res) => res.json())
+        .then((text) => {
+            if (text.result.length === 0) {
+                setNothing(true);
+              }
+            setMessages(text.result);
+        })
+        .catch((err) => console.log(err))
       }, []);
 
       function updateMessages() {
-        const messages = [];
-        getDocs(collection(db, "messages")).then((allMessages) => {
-          allMessages.forEach((message) =>
-            messages.push({ id: message.id, ...message.data() })
-          );
-          if (messages.length === 0) {
-            setNothing(true);
-          }
-          setMessages(messages);
-        });
+        fetch("http://localhost:9000/demo/messages")
+        .then((res) => res.json())
+        .then((text) => {
+            if (text.result.length === 0) {
+                setNothing(true);
+              }
+            setMessages(text.result);
+        })
+        .catch((err) => console.log(err))
       }
 
     return (

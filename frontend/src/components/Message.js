@@ -14,6 +14,7 @@ function Message(props) {
   function closeHandler() {
     setModalIsOpen(false);
     props.updateMessages();
+    console.log("bruh part 2");
   }
 
   return (

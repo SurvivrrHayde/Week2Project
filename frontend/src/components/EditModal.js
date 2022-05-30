@@ -1,5 +1,3 @@
-import db from "../firebase";
-import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { useRef } from "react";
 import { Typography, TextField, Button } from "@mui/material";
 import "./Backdrop.css";
@@ -11,27 +9,35 @@ function EditModal(props) {
   // Remove a response
 
   function onDelete() {
-    deleteDoc(doc(db, "messages", props.id));
-    props.onClick();
+     fetch("http://localhost:9000/demo/delete?id=" + props.id, {
+          method: 'DELETE',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+      }).then(() => props.onClick())
   }
 
   // Get the response
 
-  getDoc(doc(db, "messages", props.id)) // get the collection
-    .then((message) => {
-      textFieldRefUser.current.value = message.data().user;
-      textFieldRefMessage.current.value = message.data().message;
-    });
+  fetch("http://localhost:9000/demo/get?id="+props.id)
+        .then((res) => res.json())
+        .then((text) => {
+            textFieldRefUser.current.value = text.user;
+            textFieldRefMessage.current.value = text.message;
+        })
+        .catch((err) => console.log(err))
 
   //Edit the response
 
   function editData() {
-    updateDoc(doc(db, "messages", props.id), {
-      user: textFieldRefUser.current.value,
-      message: textFieldRefMessage.current.value,
-    });
-    props.onClick();
-  }
+    const change = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({ id: props.id, user: textFieldRefUser.current.value, message: textFieldRefMessage.current.value})
+    };
+    fetch("http://localhost:9000/demo/edit", change)
+    .then(props.onClick())
+  };
 
   return (
     <div className="modal">

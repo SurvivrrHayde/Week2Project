@@ -1,7 +1,5 @@
 import { Typography, Button, TextField } from "@mui/material";
 import { useRef } from "react";
-import { collection, addDoc } from "firebase/firestore";
-import db from "../firebase";
 
 function Post() {
 
@@ -15,7 +13,13 @@ function Post() {
         user: textFieldRefUser.current.value,
         message: textFieldRefMessage.current.value,
       };
-      addDoc(collection(db, "messages"), newMessage);
+      fetch("http://localhost:9000/demo/post", {
+          method: 'post',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(newMessage)
+      });
   
       textFieldRefUser.current.value = "";
       textFieldRefMessage.current.value = "";
